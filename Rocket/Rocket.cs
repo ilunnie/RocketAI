@@ -86,10 +86,10 @@ public class Rocket
         => (EngineThrustForce(time) + DragForce(Height, Speed) + WeightForce(Height)) / Mass;
 
     public double EngineThrustForce(double time)
-        => FuelMassFlow(time) * EngineExhaustSpeed_ms;
+        => time > FuelExpense.time[^1] ? .0 : FuelMassFlow(time) * EngineExhaustSpeed_ms;
 
-    public double FuelMassFlow(double Time)
-        => Interp1D.Linear(FuelExpense.time, FuelExpense.MassFlow, Time);
+    public double FuelMassFlow(double time)
+        => time > FuelExpense.time[^1] ? RocketMass_Kg : Interp1D.Linear(FuelExpense.time, FuelExpense.MassFlow, Time);
 
     public double WeightForce(double height)
         => -Mass * Gravity.GetGravity(height);
