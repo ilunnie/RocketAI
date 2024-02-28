@@ -1,0 +1,14 @@
+c:\Users\disrct\Desktop\RocketAI\bin\Debug\net7.0\RocketAI.exe
+c:\Users\disrct\Desktop\RocketAI\bin\Debug\net7.0\RocketAI.deps.json
+c:\Users\disrct\Desktop\RocketAI\bin\Debug\net7.0\RocketAI.runtimeconfig.json
+c:\Users\disrct\Desktop\RocketAI\bin\Debug\net7.0\RocketAI.dll
+c:\Users\disrct\Desktop\RocketAI\bin\Debug\net7.0\RocketAI.pdb
+c:\Users\disrct\Desktop\RocketAI\obj\Debug\net7.0\RocketAI.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\disrct\Desktop\RocketAI\obj\Debug\net7.0\RocketAI.AssemblyInfoInputs.cache
+c:\Users\disrct\Desktop\RocketAI\obj\Debug\net7.0\RocketAI.AssemblyInfo.cs
+c:\Users\disrct\Desktop\RocketAI\obj\Debug\net7.0\RocketAI.csproj.CoreCompileInputs.cache
+c:\Users\disrct\Desktop\RocketAI\obj\Debug\net7.0\RocketAI.dll
+c:\Users\disrct\Desktop\RocketAI\obj\Debug\net7.0\refint\RocketAI.dll
+c:\Users\disrct\Desktop\RocketAI\obj\Debug\net7.0\RocketAI.pdb
+c:\Users\disrct\Desktop\RocketAI\obj\Debug\net7.0\RocketAI.genruntimeconfig.cache
+c:\Users\disrct\Desktop\RocketAI\obj\Debug\net7.0\ref\RocketAI.dll

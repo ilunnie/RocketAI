@@ -1,0 +1,4 @@
+C:\Users\disrct\Desktop\RocketAI\obj\Realease\net7.0\RocketAI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\disrct\Desktop\RocketAI\obj\Realease\net7.0\RocketAI.AssemblyInfoInputs.cache
+C:\Users\disrct\Desktop\RocketAI\obj\Realease\net7.0\RocketAI.AssemblyInfo.cs
+C:\Users\disrct\Desktop\RocketAI\obj\Realease\net7.0\RocketAI.csproj.CoreCompileInputs.cache

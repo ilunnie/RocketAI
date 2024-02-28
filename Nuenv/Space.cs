@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+
 namespace AIContinuous.Nuenv;
 
 public static class Space

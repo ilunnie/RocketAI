@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Xml;
 using AIContinuous.Nuenv;
 
 namespace AIContinuous.Rocket;
@@ -17,54 +18,86 @@ public class Rocket
     public double MaxTime => FuelExpense.time.Max();
 
     public double InitialHeight { get; }
-    protected double? maxHeight = null;
-    public double MaxHeight {
-        get {
-            if (maxHeight is null)
-                maxHeight = GetMaxHeight();
-            return maxHeight.Value;
-        }
-    }
     public double RocketMass_Kg { get; }
     public double FuelMass_kg { get; protected set; }
-    public double Mass => RocketMass_Kg + FuelMass_kg;
+    public double Mass  => RocketMass_Kg + FuelMass_kg;
+    public double Time { get; set; } = 0;
+    public double Speed { get; protected set; }
+    public double Height { get; protected set; }
 
     public Rocket((double[] t, double[] MassFlow) fuelExpense, double initialHeight = 0)
     {
         this.FuelExpense = fuelExpense;
         this.InitialHeight = initialHeight;
         this.RocketMass_Kg = EmptyRocketMass_Kg;
-        this.FuelMass_kg = TotalFuelMass_Kg;
+        this.FuelMass_kg = Integrate.Romberg(fuelExpense);
     }
 
-    public double GetMaxHeight()
+    public double Launch(double time, double dt = 1e-1)
     {
-        double maxHeight = InitialHeight;
-        double maxTime = MaxTime;
-        double speed = 0;
-        
-        double height = InitialHeight;
-        for (int i = 0; i <= maxTime; i++)
+        for (double t = 0; t < time; t += dt)
+            Next(dt);
+
+        return Height;
+    }
+
+    public double LaunchUntilMax(double dt = 1e-1)
+    {
+        do Next(dt);
+        while (Speed > .0);
+
+        return Height;
+    }
+
+    public double LaunchUntilGround(double dt = 1e-1)
+    {
+        double maxHeight = 0;
+
+        do
         {
-            double acceleration = Acceleration(i, height, speed);
-            
+            Next(dt);
+            if (Height > maxHeight)
+                maxHeight = Height;
         }
+        while (Height > .0);
 
         return maxHeight;
     }
 
-    public double Acceleration(int time, double height, double speed)
-        => (EngineThrustForce(time) + DragForce(height, speed) + WeightForce(height)) / Mass;
+    public void Next(double dt)
+    {
+        UpdateSpeed(dt);
+        UpdateHeight(dt);
+        UpdateMass(dt);
 
-    public double EngineThrustForce(int time)
+        Time += dt;
+    }
+
+    public void UpdateSpeed(double dt)
+        => Speed += Acceleration(Time) * dt;
+
+    public void UpdateHeight(double dt)
+        => Height += Speed * dt;
+
+    public void UpdateMass(double dt)
+        => FuelMass_kg -= .5 * dt * (FuelMassFlow(Time) * FuelMassFlow(Time + dt));
+
+    public double Acceleration(double time)
+        => (EngineThrustForce(time) + DragForce(Height, Speed) + WeightForce(Height)) / Mass;
+
+    public double EngineThrustForce(double time)
         => FuelMassFlow(time) * EngineExhaustSpeed_ms;
 
-    public double FuelMassFlow(int Time)
+    public double FuelMassFlow(double Time)
         => Interp1D.Linear(FuelExpense.time, FuelExpense.MassFlow, Time);
 
     public double WeightForce(double height)
         => -Mass * Gravity.GetGravity(height);
 
-    public double DragForce(double height, double speed)
-        => -(1/2) * Atmosphere.Density(height) * RocketCrossSectionalArea_m2 * Math.Pow(speed, 2) * (speed < 0 ? -1 : 1);
+    public static double DragForce(double height, double speed)
+    {
+        double temp = Atmosphere.Temperature(height);
+        double cd = Drag.Coefficient(speed, temp, StandardDragCoefficient_m);
+        return -.5 * cd * Atmosphere.Density(height) * RocketCrossSectionalArea_m2 * Math.Pow(speed, 2) * Math.Sign(speed);
+    }
 }
