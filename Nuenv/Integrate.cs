@@ -1,6 +1,6 @@
 using System;
 
-namespace AIContinuous.Nuenv;
+namespace AI.Nuenv;
 
 public static class Integrate
 {

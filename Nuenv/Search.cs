@@ -1,4 +1,4 @@
-namespace AIContinuous.Nuenv;
+namespace AI.Nuenv;
 
 public static class Search
 {

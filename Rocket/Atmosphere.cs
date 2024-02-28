@@ -1,6 +1,6 @@
-using AIContinuous.Nuenv;
+using AI.Nuenv;
 
-namespace AIContinuous.Rocket;
+namespace AI.Rocket;
 
 public static class Atmosphere
 {

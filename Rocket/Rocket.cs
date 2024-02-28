@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Xml;
-using AIContinuous.Nuenv;
+using AI.Nuenv;
 
-namespace AIContinuous.Rocket;
+namespace AI.Rocket;
 
 public class Rocket
 {
@@ -89,7 +89,7 @@ public class Rocket
         => time > FuelExpense.time[^1] ? .0 : FuelMassFlow(time) * EngineExhaustSpeed_ms;
 
     public double FuelMassFlow(double time)
-        => time > FuelExpense.time[^1] ? RocketMass_Kg : Interp1D.Linear(FuelExpense.time, FuelExpense.MassFlow, Time);
+        => time > FuelExpense.time[^1] ? .0 : Interp1D.Linear(FuelExpense.time, FuelExpense.MassFlow, Time);
 
     public double WeightForce(double height)
         => -Mass * Gravity.GetGravity(height);

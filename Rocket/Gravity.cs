@@ -1,4 +1,4 @@
-namespace AIContinuous.Rocket;
+namespace AI.Rocket;
 
 using System;
 

@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace AIContinuous.Nuenv;
+namespace AI.Nuenv;
 
 public static class Space
 {
