@@ -10,7 +10,7 @@ public class Rocket
     public static double EmptyRocketMass_Kg { get; } = 750;
     public static double TotalFuelMass_Kg { get; } = 3500;
     public static float RocketDiameter_m { get; } = .6f;
-    public static float RocketCrossSectionalArea_m2 => MathF.PI * MathF.Pow(RocketDiameter_m / 2, 2);
+    public static float RocketCrossSectionalArea_m2 => MathF.PI * MathF.Pow(RocketDiameter_m, 2) / 4;
     public static float StandardDragCoefficient_m { get; } = .8f;
     public static float EngineExhaustSpeed_ms { get; } = 1916;
 
@@ -66,21 +66,21 @@ public class Rocket
 
     public void Next(double dt)
     {
-        UpdateSpeed(dt);
+        UpdateSpeed(Time, dt);
         UpdateHeight(dt);
-        UpdateMass(dt);
+        UpdateMass(Time, dt);
 
         Time += dt;
     }
 
-    public void UpdateSpeed(double dt)
-        => Speed += Acceleration(Time) * dt;
+    public void UpdateSpeed(double time, double dt)
+        => Speed += Acceleration(time) * dt;
 
     public void UpdateHeight(double dt)
         => Height += Speed * dt;
 
-    public void UpdateMass(double dt)
-        => FuelMass_kg -= .5 * dt * (FuelMassFlow(Time) * FuelMassFlow(Time + dt));
+    public void UpdateMass(double time, double dt)
+        => FuelMass_kg -= .5 * dt * (FuelMassFlow(time) * FuelMassFlow(time + dt));
 
     public double Acceleration(double time)
         => (EngineThrustForce(time) + DragForce(Height, Speed) + WeightForce(Height)) / Mass;
@@ -89,7 +89,7 @@ public class Rocket
         => time > FuelExpense.time[^1] ? .0 : FuelMassFlow(time) * EngineExhaustSpeed_ms;
 
     public double FuelMassFlow(double time)
-        => time > FuelExpense.time[^1] ? .0 : Interp1D.Linear(FuelExpense.time, FuelExpense.MassFlow, Time);
+        => time > FuelExpense.time[^1] ? .0 : Interp1D.Linear(FuelExpense.time, FuelExpense.MassFlow, time);
 
     public double WeightForce(double height)
         => -Mass * Gravity.GetGravity(height);

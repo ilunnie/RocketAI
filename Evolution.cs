@@ -47,23 +47,6 @@ public class Evolution
         this.IndividualsFitness = new double[NPop];
     }
 
-    private void findBestIndividual()
-    {
-        var fitnessBest = IndividualsFitness[BestIndividualIndex];
-
-        for (int i = 0; i < NPop; i++)
-        {
-            var fitnessCurrent = Fitness(Individuals[i]);
-
-            if (fitnessCurrent > fitnessBest)
-            {
-                BestIndividualIndex = i;
-                fitnessBest = fitnessCurrent;
-            }
-        }
-        IndividualsFitness[BestIndividualIndex] = fitnessBest;
-    }
-
     private void GeneratePopulation()
     {
         int dimension = Dimension;
@@ -84,6 +67,23 @@ public class Evolution
                                         ? Fitness(Individuals[i])
                                         : double.MaxValue;
         }
+
+        FindBestIndividual();
+    }
+
+    private void FindBestIndividual()
+    {
+        var fitnessBest = IndividualsFitness[BestIndividualIndex];
+
+        for (int i = 0; i < NPop; i++)
+        {
+            if (IndividualsFitness[i] < fitnessBest)
+            {
+                BestIndividualIndex = i;
+                fitnessBest = IndividualsFitness[i];
+            }
+        }
+        IndividualsFitness[BestIndividualIndex] = fitnessBest;
     }
 
     private double[] Mutate(int index)
@@ -97,13 +97,24 @@ public class Evolution
         while (individualRand1 == index);
 
         do individualRand2 = Random.Shared.Next(NPop);
-        while (individualRand1 == individualRand2);
+        while (individualRand2 == individualRand1);
 
         for (int i = 0; i < Dimension; i++)
             newIndividual[i] += Utils.Rescale(Random.Shared.NextDouble(), MutationMin, MutationMax) *
                                 (Individuals[individualRand1][i] - Individuals[individualRand2][i]);
 
         return newIndividual;
+    }
+
+    private void EnsureBounds(double[] individual)
+    {
+        for (int i = 0; i < Dimension; i++)
+            if (individual[i] < Bounds[i][0] || individual[i] > Bounds[i][1])
+                individual[i] = Utils.Rescale(
+                    Random.Shared.NextDouble(),
+                    Bounds[i][0],
+                    Bounds[i][1]
+                );
     }
 
     protected double[] Crossover(int index)
@@ -115,6 +126,7 @@ public class Evolution
             if (!(Random.Shared.NextDouble() < Recombination) || (i == Random.Shared.Next(Dimension)))
                 result[i] = trial[i];
 
+        EnsureBounds(result);
         return result;
     }
 
@@ -132,7 +144,7 @@ public class Evolution
 
             if ((restIndividual > 0 && restTrial < restIndividual)
                 || (restTrial <= 0 && restIndividual > 0)
-                || (restTrial <= 0 && fitnessTrial > Fitness(Individuals[i])))
+                || (restTrial <= 0 && fitnessTrial < IndividualsFitness[i]))
             {
                 Individuals[i] = trial;
                 IndividualsRestrictions[i] = restTrial;
@@ -140,17 +152,18 @@ public class Evolution
             }
         }
 
-        findBestIndividual();
-        Console.WriteLine(IndividualsFitness[BestIndividualIndex]);
+        FindBestIndividual();
     }
 
     public double[] Optimize(int gen)
     {
         GeneratePopulation();
-        findBestIndividual();
 
         for (int i = 0; i < gen; i++)
+        {
+            Console.WriteLine($"Generation: {i + 1}");
             Iterate();
+        }
 
         return Individuals[BestIndividualIndex];
     }
