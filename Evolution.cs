@@ -55,7 +55,7 @@ public class Evolution
         {
             var fitnessCurrent = Fitness(Individuals[i]);
 
-            if (fitnessCurrent < fitnessBest)
+            if (fitnessCurrent > fitnessBest)
             {
                 BestIndividualIndex = i;
                 fitnessBest = fitnessCurrent;
@@ -70,7 +70,7 @@ public class Evolution
 
         for (int i = 0; i < this.NPop; i++)
         {
-            Individuals[i] = new double[dimension];
+            Individuals.Add(new double[dimension]);
 
             for (int j = 0; j < dimension; j++)
                 Individuals[i][j] = Utils.Rescale(
@@ -132,7 +132,7 @@ public class Evolution
 
             if ((restIndividual > 0 && restTrial < restIndividual)
                 || (restTrial <= 0 && restIndividual > 0)
-                || (restTrial <= 0 && fitnessTrial < Fitness(Individuals[i])))
+                || (restTrial <= 0 && fitnessTrial > Fitness(Individuals[i])))
             {
                 Individuals[i] = trial;
                 IndividualsRestrictions[i] = restTrial;
@@ -141,13 +141,16 @@ public class Evolution
         }
 
         findBestIndividual();
+        Console.WriteLine(IndividualsFitness[BestIndividualIndex]);
     }
 
-    public double[] Optimize(int n)
+    public double[] Optimize(int gen)
     {
         GeneratePopulation();
+        findBestIndividual();
 
-        Iterate();
+        for (int i = 0; i < gen; i++)
+            Iterate();
 
         return Individuals[BestIndividualIndex];
     }

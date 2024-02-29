@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text;
 
 namespace AI;
@@ -16,4 +17,16 @@ public static class Utils
         builder.Append("]");
         return builder.ToString();
     }
+
+    public static double[][] ToBounds(this double[] bound, int length)
+    {
+        List<double[]> bounds = new();
+
+        for (int i = 0; i < length; i++)
+            bounds.Add((double[])bound.Clone());
+
+        return bounds.ToArray();
+    }
+    public static double[][] LinearBounds(double min, double max, int length)
+        => ToBounds(new double[] {min, max}, length);
 }
